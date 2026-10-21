@@ -1,10 +1,13 @@
-#!/bin/bash
-set -euo pipefail
+#!/usr/bin/bash
+set -eo pipefail
 
+export PATH="$HOME/miniforge3/bin:$PATH"
 source "$(conda info --base)/etc/profile.d/conda.sh"
-conda create -n test_geco2 python=3.10 -y
-conda activate test_geco2
 
+conda create -n test_geco3 python=3.10 -y
+conda activate test_geco3
+
+conda install -c nvidia cuda-toolkit=12.6 -y
 pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu126
 
 cd ./Deformable-DETR/models/ops
@@ -24,3 +27,4 @@ pip install gradio_image_prompter
 
 pip install huggingface-hub==0.34.3
 pip install --force-reinstall "pydantic<2.11"
+

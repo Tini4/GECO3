@@ -100,3 +100,6 @@ cache/
 *.pdb
 *.mat
 *.h5
+
+models/ops/
+
