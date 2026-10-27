@@ -102,4 +102,4 @@ cache/
 *.h5
 
 models/ops/
-
+data/
