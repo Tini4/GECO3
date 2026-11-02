@@ -103,3 +103,8 @@ cache/
 
 models/ops/
 data/
+geco2_val.json
+geco2_test.json
+
+reports/
+research_notes/

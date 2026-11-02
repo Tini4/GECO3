@@ -27,4 +27,3 @@ pip install gradio_image_prompter
 
 pip install huggingface-hub==0.34.3
 pip install --force-reinstall "pydantic<2.11"
-
