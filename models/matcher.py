@@ -49,11 +49,13 @@ class PointLossHungarianMatcher(nn.Module):
 
             # We flatten to compute the cost matrices in a batch
             out_prob = outputs["box_v"].flatten(0, 1).sigmoid()
-            out_bbox = outputs["pred_boxes"].flatten(0, 1)  # [batch_size * num_queries, 4]
+            # Cost matrices below are [num_queries, num_gt] and reach GBs on dense images, so build them
+            # on CPU (C is moved there for linear_sum_assignment anyway) to avoid GPU OOM on 8 GB cards
+            out_bbox = outputs["pred_boxes"].flatten(0, 1).float().cpu()  # [batch_size * num_queries, 4]
 
            # Also concat the target labels and boxes
             tgt_ids = torch.cat([v["labels"] for v in targets])
-            tgt_bbox = torch.cat([v["boxes"] for v in targets])
+            tgt_bbox = torch.cat([v["boxes"] for v in targets]).float().cpu()
 
             # Compute the L1 cost between boxes
             cost_bbox = torch.cdist(out_bbox, tgt_bbox, p=1)

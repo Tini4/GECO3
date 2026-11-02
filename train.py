@@ -157,7 +157,9 @@ def train(args):
             gt_bboxes = gt_bboxes.to(device)
 
             optimizer.zero_grad()
-            outputs, ref_points, centerness, outputs_coord, aux = model(img, bboxes)
+            # bf16 mixed precision: fp32 does not fit in 8 GB at 1024px
+            with torch.autocast('cuda', dtype=torch.bfloat16):
+                outputs, ref_points, centerness, outputs_coord, aux = model(img, bboxes)
             outputs_aux, ref_points_aux, centerness_aux, outputs_coord_aux = aux
 
             losses = []

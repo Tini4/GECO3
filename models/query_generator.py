@@ -149,14 +149,18 @@ class C_base(nn.Module):
             hq_features_l2 = layer(image_f=hq_features_l2,
                                    prototypes=hq_prototypes[1])
 
-        for layer in self.image_attention:
-            src = layer((src+image_pe),self.reference_points,src,self.spatial_shapes, self.level_start_index)
+        # MSDeformAttn's CUDA kernel only supports fp32, so run it outside autocast (no-op when autocast is off)
+        with torch.autocast('cuda', enabled=False):
+            src, hq_features_l1, hq_features_l2 = src.float(), hq_features_l1.float(), hq_features_l2.float()
 
-        for layer in self.image_attention_l1:
-            hq_features_l1 = layer((hq_features_l1 +hq_features_l1_pos), self.reference_points1, hq_features_l1, self.spatial_shapes1, self.level_start_index1)
+            for layer in self.image_attention:
+                src = layer((src+image_pe),self.reference_points,src,self.spatial_shapes, self.level_start_index)
 
-        for layer in self.image_attention_l2:
-            hq_features_l2 = layer((hq_features_l2+hq_features_l2_pos), self.reference_points2, hq_features_l2, self.spatial_shapes2, self.level_start_index2)
+            for layer in self.image_attention_l1:
+                hq_features_l1 = layer((hq_features_l1 +hq_features_l1_pos), self.reference_points1, hq_features_l1, self.spatial_shapes1, self.level_start_index1)
+
+            for layer in self.image_attention_l2:
+                hq_features_l2 = layer((hq_features_l2+hq_features_l2_pos), self.reference_points2, hq_features_l2, self.spatial_shapes2, self.level_start_index2)
 
         src = src.transpose(1, 2).reshape(b, c, h, w)
         hq_features_l2 = hq_features_l2.transpose(1, 2).view(b, c, h*2, w*2)

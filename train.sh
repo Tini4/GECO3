@@ -18,6 +18,7 @@ export NCCL_IB_DISABLE=1
 export NCCL_BLOCKING_WAIT=1
 export TORCH_DISTRIBUTED_DEBUG=DETAIL
 export CUDA_LAUNCH_BLOCKING=1s
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 export PATH="$HOME/miniforge3/bin:$PATH"
 source "$(conda info --base)/etc/profile.d/conda.sh"
